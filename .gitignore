@@ -1,0 +1,105 @@
+### Logs ###
+*.log
+logs/
+spring.log
+
+### OS Generated Files ###
+.DS_Store
+Thumbs.db
+
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+### Gradle ###
+.gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+gradle-app.setting
+gradlew
+gradlew.bat
+
+### STS (Spring Tool Suite) ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+
+### Test Reports ###
+/test-output/
+/surefire-reports/
+/failsafe-reports/
+
+### Coverage ###
+/jacoco.exec
+/coverage/
+/target/site/jacoco/
+
+### Database ###
+*.h2.db
+*.mv.db
+*.db
+*.sql
+
+### Docker ###
+*.pid
+docker-compose.override.yml
+.env
+.docker/
+.dockerignore
+
+### Kubernetes ###
+*.yaml
+k8s/
+
+### Environment / Config ###
+.env
+.env.*
+application-*.yml
+application-*.properties
+secrets.properties
+*.key
+*.pem
+
+### Node (in case of embedded front-end) ###
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+### Others ###
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+*.rej
+.idea_modules/

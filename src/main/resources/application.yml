@@ -1,0 +1,36 @@
+# MySQL configuration
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/expensedb
+    username: root
+    password: Nik123@N
+# JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+# Email configuration
+  mail:
+    host: smtp-relay.brevo.com
+    port: 587
+    username: 99103a001@smtp-brevo.com
+    password: M6c2fAbdj9G3OTJB
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          from: sharmanikhil12jv@gmail.com
+        protocol: smtp
+
+server:
+  servlet:
+    context-path: /api/v0
+
+jwt:
+  secret: bNqF9eT3xOyz6Yw2AELQzVKqKdSlYX6oVxq0fgSTxLMXYE8ZTzzRkblMIBLQ7rJeMKgq1W1rKTMHJWOSOY5rOw==
+  expiration: 86400000
