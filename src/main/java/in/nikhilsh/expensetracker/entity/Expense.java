@@ -8,28 +8,30 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
-@Entity
-@Table(name = "tbl_profiles")
 @Data
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Profile {
+@Table(name = "tbl_expenses")
+public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fullName;
+    private String name;
 
-    @Column(unique = true)
-    private String email;
+    private String icon;
 
-    private String password;
+    private LocalDate date;
 
-    private String profileImageUrl;
+    private BigDecimal amount;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -38,14 +40,18 @@ public class Profile {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    private Boolean isActive;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    private String activationToken;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
 
     @PrePersist
     public void prePersist(){
-        if(this.isActive == null){
-            this.isActive = false;
+        if(this.date == null){
+            this.date = LocalDate.now();
         }
     }
 }
