@@ -1,5 +1,7 @@
 # MySQL configuration
 spring:
+  profiles:
+    active: prod
   datasource:
     url: jdbc:mysql://localhost:3306/expensedb
     username: root
@@ -14,17 +16,17 @@ spring:
         format_sql: true
 # Email configuration
   mail:
-    host: smtp-relay.brevo.com
+    host: ${BREVO_HOST}
     port: 587
-    username: 99103a001@smtp-brevo.com
-    password: M6c2fAbdj9G3OTJB
+    username: ${BREVO_USER}
+    password: ${BREVO_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-          from: sharmanikhil12jv@gmail.com
+          from: ${FROM_MAIL}
         protocol: smtp
         properties:
           mail:
@@ -35,10 +37,14 @@ server:
     context-path: /api/v0
 
 jwt:
-  secret: bNqF9eT3xOyz6Yw2AELQzVKqKdSlYX6oVxq0fgSTxLMXYE8ZTzzRkblMIBLQ7rJeMKgq1W1rKTMHJWOSOY5rOw==
+  secret: ${JWT_SECRET}
   expiration: 86400000
 
 expense:
   tracker:
     frontend:
-      url: http://localhost:5173/
+      url: ${EXPENSE_TRACKER_FRONTEND_URL}
+
+app:
+  activation:
+    url: ${EXPENSE_TRACKER_BACKEND_URL}
