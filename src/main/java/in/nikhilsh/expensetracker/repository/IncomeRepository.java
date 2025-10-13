@@ -33,4 +33,5 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
             LocalDate endDate
     );
 
+    List<Income> findByProfileIdAndDate(Long profileId, LocalDate date);
 }

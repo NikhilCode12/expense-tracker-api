@@ -26,6 +26,9 @@ spring:
             enable: true
           from: sharmanikhil12jv@gmail.com
         protocol: smtp
+        properties:
+          mail:
+            debug: true
 
 server:
   servlet:
@@ -34,3 +37,8 @@ server:
 jwt:
   secret: bNqF9eT3xOyz6Yw2AELQzVKqKdSlYX6oVxq0fgSTxLMXYE8ZTzzRkblMIBLQ7rJeMKgq1W1rKTMHJWOSOY5rOw==
   expiration: 86400000
+
+expense:
+  tracker:
+    frontend:
+      url: http://localhost:5173/

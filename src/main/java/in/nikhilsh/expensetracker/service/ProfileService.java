@@ -39,9 +39,35 @@ public class ProfileService {
         newProfile = profileRepository.save(newProfile);
 
         String activationLink = "http://localhost:8080/api/v0/activate?token=" + newProfile.getActivationToken();
-        String subject = "Activate your Expense Tracker account";
-        String body = "Hi, " + newProfile.getFullName() + "\n Please click the given link to activate your account: \n" + activationLink + "\n" +
-                "Regards \n Expense Tracker Team";
+        String subject = "Activate Your Expense Tracker Account";
+
+        String body = String.format("""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0;">
+                <div style="max-width: 600px; margin: 40px auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                    <h2 style="text-align: center; color: #333;">Welcome, %s!</h2>
+        
+                    <p>Thank you for signing up with <strong>Expense Tracker</strong>.</p>
+                    <p>Please confirm your email address to activate your account.</p>
+        
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="%s"
+                           style="background-color: #007BFF; color: #ffffff; text-decoration: none; 
+                                  padding: 12px 24px; border-radius: 6px; font-weight: 600; 
+                                  font-size: 16px; display: inline-block;">
+                            Activate Account
+                        </a>
+                    </div>
+        
+                    <p>If you didn’t sign up for this account, you can safely ignore this email.</p>
+        
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    <p style="font-size: 12px; color: #888; text-align: center;">Expense Tracker © 2025</p>
+                </div>
+            </body>
+            </html>
+        """, newProfile.getFullName(), activationLink);
+
 
         emailService.sendMail(newProfile.getEmail(), subject, body);
         return toDTO(newProfile);
