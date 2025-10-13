@@ -1,8 +1,6 @@
 package in.nikhilsh.expensetracker.service;
 
-import in.nikhilsh.expensetracker.dto.CategoryDTO;
 import in.nikhilsh.expensetracker.dto.IncomeDTO;
-import in.nikhilsh.expensetracker.dto.ProfileDTO;
 import in.nikhilsh.expensetracker.entity.Category;
 import in.nikhilsh.expensetracker.entity.Income;
 import in.nikhilsh.expensetracker.entity.Profile;
@@ -11,8 +9,9 @@ import in.nikhilsh.expensetracker.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +25,51 @@ public class IncomeService {
 
     public IncomeDTO addIncome(IncomeDTO incomeDTO){
         Profile currentProfile = profileService.getCurrentProfile();
-        Category category = categoryRepository.findById(incomeDTO.getId())
+        Category category = categoryRepository.findById(incomeDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Income newIncome = toEntity(incomeDTO, category, currentProfile);
         newIncome = incomeRepository.save(newIncome);
         return toDTO(newIncome);
+    }
+
+    // get all incomes for the current profile
+    public List<IncomeDTO> getIncomesForCurrentProfile(){
+        Profile currentProfile = profileService.getCurrentProfile();
+        List<Income> incomesList = incomeRepository.findByProfileIdOrderByDateDesc(currentProfile.getId());
+        return incomesList.stream().map(this::toDTO).toList();
+    }
+
+    // get incomes for current profile based on start date and end date
+    public List<IncomeDTO> getIncomesForCurrentProfileInDateRange(LocalDate startDate, LocalDate endDate){
+        Profile currentProfile = profileService.getCurrentProfile();
+        List<Income> incomesList = incomeRepository.findByProfileIdAndDateBetween(currentProfile.getId(), startDate, endDate);
+        return incomesList.stream().map(this::toDTO).toList();
+    }
+
+    // delete income by id for the current profile
+    public void deleteIncomeForCurrentProfile(Long incomeId){
+        Profile currentProfile = profileService.getCurrentProfile();
+        Income income = incomeRepository.findById(incomeId)
+                .orElseThrow(() -> new RuntimeException("No such income found."));
+
+        if(!income.getProfile().getId().equals(currentProfile.getId())) {
+            throw new RuntimeException("Unauthorized delete operation not allowed.");
+        }
+        incomeRepository.delete(income);
+    }
+
+    // get top 5 incomes for the current profile
+    public List<IncomeDTO> getTopFiveIncomesForCurrentProfile(){
+        Profile currentProfile = profileService.getCurrentProfile();
+        List<Income> incomeList = incomeRepository.findTop5ByProfileIdOrderByDateDesc(currentProfile.getId());
+        return incomeList.stream().map(this::toDTO).toList();
+    }
+
+    // get total income for the current profile
+    public BigDecimal getTotalIncomeForCurrentProfile(){
+        Profile currentProfile = profileService.getCurrentProfile();
+        BigDecimal total = incomeRepository.findTotalIncomeByProfileId(currentProfile.getId());
+        return total != null ? total : BigDecimal.ZERO;
     }
 
     // helper methods
