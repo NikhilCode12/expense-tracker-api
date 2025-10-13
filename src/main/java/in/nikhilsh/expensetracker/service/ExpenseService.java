@@ -8,6 +8,7 @@ import in.nikhilsh.expensetracker.repository.CategoryRepository;
 import in.nikhilsh.expensetracker.repository.ExpenseRepository;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -73,6 +74,15 @@ public class ExpenseService {
         Profile currentProfile = profileService.getCurrentProfile();
         BigDecimal total = expenseRepository.findTotalExpenseByProfileId(currentProfile.getId());
         return total != null ? total : BigDecimal.ZERO;
+    }
+
+    // filter expenses
+    public List<ExpenseDTO> filterExpenses(LocalDate startDate, LocalDate endDate, String keyword, Sort sort){
+        Profile profile = profileService.getCurrentProfile();
+        List<Expense> expenseList = expenseRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(
+                profile.getId(), startDate, endDate, keyword, sort
+        );
+        return expenseList.stream().map(this::toDTO).toList();
     }
 
     // helper methods

@@ -7,6 +7,7 @@ import in.nikhilsh.expensetracker.entity.Profile;
 import in.nikhilsh.expensetracker.repository.CategoryRepository;
 import in.nikhilsh.expensetracker.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -70,6 +71,19 @@ public class IncomeService {
         Profile currentProfile = profileService.getCurrentProfile();
         BigDecimal total = incomeRepository.findTotalIncomeByProfileId(currentProfile.getId());
         return total != null ? total : BigDecimal.ZERO;
+    }
+
+    // filter incomes
+    public List<IncomeDTO> filterIncomes(LocalDate startDate, LocalDate endDate, String keyword, Sort sort){
+        Profile profile = profileService.getCurrentProfile();
+        List<Income> incomeList = incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(
+                profile.getId(),
+                startDate,
+                endDate,
+                keyword,
+                sort
+        );
+        return incomeList.stream().map(this::toDTO).toList();
     }
 
     // helper methods
