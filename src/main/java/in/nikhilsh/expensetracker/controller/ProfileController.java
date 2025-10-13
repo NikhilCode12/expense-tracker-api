@@ -17,9 +17,14 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/register")
-    public ResponseEntity<ProfileDTO> registerUser(@RequestBody ProfileDTO profileDTO){
+    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody ProfileDTO profileDTO){
         ProfileDTO registeredProfile = profileService.registerUser(profileDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredProfile);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                Map.of(
+                        "message", "Registration successful. Please check your email to activate your account.",
+                        "user", registeredProfile
+                )
+        );
     }
 
     @GetMapping("/activate")

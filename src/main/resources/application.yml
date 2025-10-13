@@ -17,11 +17,12 @@ spring:
 # Email configuration
   mail:
     host: ${BREVO_HOST}
-    port: 587
+    port: 2525
     username: ${BREVO_USER}
     password: ${BREVO_PASSWORD}
     properties:
       mail:
+        default-encoding: UTF-8
         smtp:
           auth: true
           starttls:
