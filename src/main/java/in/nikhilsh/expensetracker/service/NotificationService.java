@@ -1,13 +1,18 @@
 package in.nikhilsh.expensetracker.service;
 
+import in.nikhilsh.expensetracker.dto.ExpenseDTO;
 import in.nikhilsh.expensetracker.entity.Profile;
 import in.nikhilsh.expensetracker.repository.ProfileRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -61,6 +66,61 @@ public class NotificationService {
 
             emailService.sendMail(profile.getEmail(), subject, body);
             log.info("Reminder email sent to: {}", profile.getEmail());
+            log.info("Job completed: sendDailyIncomeExpenseRemainder()");
         });
     }
+
+    @Scheduled(cron = "0 0 23 * * *", zone = "IST")
+    public void sendDailyExpenseSummary(){
+        log.info("Job started: sendDailyExpenseSummary()");
+        List<Profile> allProfiles = profileRepository.findAll();
+        allProfiles.forEach(profile -> {
+            List<ExpenseDTO> todayExpenses = expenseService.getExpensesForUserOnDate(profile.getId(), LocalDate.now(ZoneId.of("Asia/Kolkata")));
+            if(!todayExpenses.isEmpty()){
+                StringBuilder table = new StringBuilder();
+                table.append("<table style='border-collapse: collapse; width: 100%;'>")
+                        .append("<thead style='background-color: #f2f2f2;'>")
+                        .append("<tr>")
+                        .append("<th style='border: 1px solid #ddd; padding: 8px;'>Category</th>")
+                        .append("<th style='border: 1px solid #ddd; padding: 8px;'>Name</th>")
+                        .append("<th style='border: 1px solid #ddd; padding: 8px;'>Amount</th>")
+                        .append("</tr>")
+                        .append("</thead>")
+                        .append("<tbody>");
+
+                BigDecimal totalAmount = BigDecimal.ZERO;
+
+                for (ExpenseDTO expense : todayExpenses) {
+                    table.append("<tr>")
+                            .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getCategoryName()).append("</td>")
+                            .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getName()).append("</td>")
+                            .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(expense.getAmount()).append("</td>")
+                            .append("</tr>");
+
+                    totalAmount = totalAmount.add(expense.getAmount());
+                }
+
+                table.append("<tr style='font-weight: bold;'>")
+                        .append("<td colspan='3' style='border: 1px solid #ddd; padding: 8px;'>Total</td>")
+                        .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(totalAmount).append("</td>")
+                        .append("</tr>")
+                        .append("</tbody>")
+                        .append("</table>");
+
+                String body = String.format("""
+                <div style='font-family: Arial, sans-serif; font-size: 14px; color: #333;'>
+                    <p>Hi %s,</p>
+                    <p>Here’s your expense summary for today. Keep track of your spending and stay on top of your budget!</p>
+                    %s
+                    <p>Happy budgeting!<br/>- Expense Tracker Team</p>
+                </div>
+                """, profile.getFullName(), table);
+
+                emailService.sendMail(profile.getEmail(), "Daily Expense Summary", body);
+            }
+        });
+
+        log.info("Job finished: sendDailyExpenseSummary()");
+    }
+
 }

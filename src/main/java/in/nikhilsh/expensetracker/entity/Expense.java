@@ -40,7 +40,7 @@ public class Expense {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
