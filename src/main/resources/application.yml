@@ -3,9 +3,9 @@ spring:
   profiles:
     active: prod
   datasource:
-    url: jdbc:mysql://localhost:3306/expensedb
-    username: root
-    password: Nik123@N
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 # JPA configuration
   jpa:
     hibernate:
